@@ -1,7 +1,7 @@
 /*
  * index.js
  */
-//var MappingRethinkDB = require(__dirname+'/rethinkdb.js');
+//var MainRethinkDB = require(__dirname+'/rethinkdb.js');
 
 /**
  * Create a new Main that let users create sub-main.
@@ -10,11 +10,11 @@
 function Main() { }
 
 /**
- * Create a new MappingRethinkDB object.
- * @return {MappingRethinkDB}
+ * Create a new MainRethinkDB object.
+ * @return {MainRethinkDB}
  */
 //Main.prototype.rethinkdb = function(config) {
-//  return new MappingRethinkDB(config);
+//  return new MainRethinkDB(config);
 //}
 
 module.exports = Main;
