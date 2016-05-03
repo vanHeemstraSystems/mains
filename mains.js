@@ -5,7 +5,7 @@ var MainsMain = require(__dirname+'/main.js');
 
 /**
  * Create a new Mains that let users create sub-mains.
- * @return {Mappings}
+ * @return {Mains}
  */
 function Mains() { }
 
