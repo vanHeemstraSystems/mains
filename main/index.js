@@ -14,7 +14,7 @@ function Main() {
   // use self's here for protection from direct access
   self._proxies = {}; // will be set, before passing on to mapping
   self._resource = {}; // will be set, before passing on to mapping
-  self.configuration = {};
+  self._configuration = {};
 }
 
 Main.prototype.proxies = function() {
