@@ -15,6 +15,11 @@ function Main() {
   self._proxies = {}; // will be set, before passing on to mapping
   self._resource = {}; // will be set, before passing on to mapping
   self._configuration = {};
+  self._foo = 'bar';
+}
+
+Main.prototype.foo = function() {
+  return self._foo;
 }
 
 Main.prototype.proxies = function() {
@@ -42,7 +47,7 @@ Main.prototype.setconfiguration = function(fnOrValue) {
 }
 
 Main.prototype.run = function() {  // a function that returns a promise
-  console.log('main - run called');	
+  console.log('main - run called');
   // run the resource
   this.promise = self.proxies().proxy().libraries().library().promise;
   //var join = promise.join;
@@ -131,6 +136,290 @@ Main.prototype.run = function() {  // a function that returns a promise
 
 
     console.log('main - +++++++++++++++++++++++++++ CHECK POINT 0001 ++++++++++++++++++++++++++');
+
+      // Check which properties are contained within configurationForUuid
+	  var common = configurationForUuid.common();
+	  console.log('core main - configurationForUuid.common(): ', common);
+	  // Data protection
+	  // var private_host = configurationForUuid.common()._host; // This fails, var _host is private therefore hidden from direct access
+	  // console.log('server - private_host: ', private_host);
+	  // var public_host = configurationForUuid.common().host(); // This succeeds, the method host() is public, with access to the private var _host
+	  // console.log('server - public_host: ', public_host);
+	  var server_prefix = configurationForUuid.common().server_prefix() || 'PREFIX';
+	  console.log('core main - server_prefix: ', server_prefix);
+
+	  var serversServer = configurationForUuid.servers().server();
+	  console.log('core main - servers().server(): ', serversServer);
+
+	  var serversServerExpress = configurationForUuid.servers().server().express();
+	  console.log('core main - servers().server().express(): ', serversServerExpress);
+
+	  var serversServerExpressHost = configurationForUuid.servers().server().express().host();
+	  console.log('core main - servers().server().express().host(): ', serversServerExpressHost); // undefined ?! FIX THIS !!
+
+	  // Get the express library
+	  var express = _proxies().proxy().libraries().library().express; // note: don't call express yet
+	  console.log('core main - express: ', express);
+	  // Assign express to the server
+	  var server = express(); // note: now call express
+	  console.log('core main - server: ', server);
+
+	  var mappings = _proxies().proxy().mappings();
+	  console.log('core main - mappings: ', mappings);
+
+	  var mapping = _proxies().proxy().mappings().mapping();
+	  console.log('core main - mapping: ', mapping);
+
+	  var rethinkdbMapping = _proxies().proxy().mappings().mapping().rethinkdb; // note: don't call rethinkdb yet
+	  console.log('core main - rethinkdbMapping: ', rethinkdbMapping);
+
+	  var config = configurationForUuid.databases().database().rethinkdb();
+	  console.log('core main - config: ', config);
+
+	  console.log('core main - config.rethinkdb(): ', config.rethinkdb()); // Expected empty Object
+	  var rethinkdb = _proxies().proxy().databases().database().rethinkdb();
+	  console.log('core main - rethinkdb: ', rethinkdb);
+	  config.setrethinkdb(rethinkdb); // Set rethinkdb to config
+	  console.log('core main - config.rethinkdb(): ', config.rethinkdb()); // Expected set to RethinkDB
+
+	  console.log('core main - config.event(): ', config.event()); // Expected empty Object
+	  var event = _proxies().proxy().events().event();
+	  config.setevent(event); // Set event to config
+	  console.log('core main - config.event(): ', config.event()); // Expected set to Event
+
+	  console.log('core main - config.error(): ', config.error()); // Expected empty Object
+	  var error = _proxies().proxy().errors().error();
+	  config.seterror(error); // Set error to config
+	  console.log('core main - config.error(): ', config.error()); // Expected set to Error
+
+	  var promise = _proxies().proxy().libraries().library().promise;
+	 
+	  console.log('core main - config.utility(): ', config.utility()); // Expected empty Object
+	  var utility = _proxies().proxy().utilities().utility();
+	  utility.setpromise(promise); // Don't call the promise yet, or should we?
+	  utility.setevent(event);
+
+	  // UNCOMMENT WHEN THIS ERROR IS FIXED!
+	  //utility.inherits(error); // Utility needs to inherit all the error objects // Currently [TypeError: utility.inherits is not a function]
+
+	  config.setutility(utility); // Set utility to config
+	  console.log('core main - config.utility(): ', config.utility()); // Expected set to Utility
+
+	  console.log('core main - config.schema(): ', config.schema()); // Expected empty Object 
+	  var schema = _proxies().proxy().schemas().schema();
+	  schema.seterror(error);
+	  schema.setutility(utility);
+	  schema.settype(type);
+	  config.setschema(schema); // Set schema to config
+	  console.log('core main - config.schema(): ', config.schema()); // Expected set to Schema
+
+	  console.log('core main - config.type(): ', config.type()); // Expected empty Object 
+	  var type = _proxies().proxy().types().type();
+	  type.seterror(error);
+	  type.setutility(utility);
+	  type.setschema(schema);
+	  var validator = _proxies().proxy().libraries().library().validator; // note: don't call validator yet
+	  type.setvalidator(validator);
+	  config.settype(type); // Set type to config
+	  console.log('core main - config.type(): ', config.type()); // Expected set to Type
+
+	  var feed = _proxies().proxy().feeds().feed();
+	  feed.setevent(event);
+	  feed.setpromise(promise);
+	  feed.setutility(utility);
+
+	  console.log('core main - config.query(): ', config.query()); // Expected empty Object
+	  var query = _proxies().proxy().queries().query();
+	  query.seterror(error);
+	  query.setschema(schema);
+	  query.setutility(utility);
+	  query.setfeed = (feed);
+	  query.setpromise = (promise);
+
+	  console.log('core main ------------- CHECK POINT  000 -------------'); // FOR TESTING ONLY !
+
+	// WE ARE HERE ! 
+	  query.setrethinkdb(rethinkdb); // Do this as last set; // Causes [TypeError: self._rethinkdb is not a function]
+	  
+	  console.log('core main ------------- CHECK POINT  001 -------------'); // FOR TESTING ONLY !
+
+	  config.setquery(query); // Set query to config
+	  console.log('core main - config.query(): ', config.query()); // Expected set to Query
+
+	  // Make sure RethinkDB is running before executing the following instruction
+	  // On Windows, run rethinkdb.exe
+	  // On Linux, tbc
+	  // On Mac, tbc
+	  var rethinkdbMapping = rethinkdbMapping(config);
+
+
+
+
+	//  var rethinkdb = rethinkdbMapping.r;
+	//  console.log('core main - rethinkdb: ', rethinkdb);
+
+
+
+
+	//				            .then(function(_Me) {
+	//				              return(
+	//				              	join(_Me.proxies.mappings(), function(mappings) { 
+	//				                  console.log('server - mappings: ', mappings);
+	//				                  _Me.mappings = mappings; // mappings contains a mapping for rethinkdb
+	//				                  return(_Me);
+	//				                }) // eof join
+	//					            .catch(function(error) {
+	//				                  console.log('server - error: ', error);
+	//				                }) // eof catch                
+	//				              ); // eof return
+	//				            }); // eof then mappings
+
+					/*				
+										// Import mappings
+										//	var Mappings = require(__dirname+'/../mappings.js')('RethinkDB'); // here we specify that we want the 'rethinkdb' mapping
+										//	console.log(server_prefix + ' - Mappings: ', Mappings);
+
+											// handle mappings like configurations, as a function that returns a promise
+						                    var mappings = require(path.join(paths.mappings, 'mappings.js')); // A function that returns a Promise
+						                    var mapping = 'rethinkdb'; // here we specify that we want the 'rethinkdb' mapping
+						                    mappings(mapping)
+						                      .then(function(mappings) {
+
+											    var server_prefix = configurations.common.server_prefix || 'PREFIX';
+											    console.log(server_prefix + ' - mappings: ', mappings);
+					*/
+
+	//					                        console.log('++++++++++++++++++++++++++++ LOG POINT server 0 ++++++++++++++++++++++++++++');
+
+					/*
+											    // AMEND FROM BELOW HERE ....
+
+						                        // Call RethinkDB mapping
+												console.log(server_prefix + ' - configurations.databases.rethinkdb: ', configurations.databases.rethinkdb);
+
+												// NOTE: 'thinky' is from here on 'Mapping'
+
+						                        console.log('++++++++++++++++++++++++++++ LOG POINT server 1 ++++++++++++++++++++++++++++');
+
+
+						                        // An error occurs here: 
+						                        // Unhandled rejection TypeError: 
+						                        // rethinkdb is not a function
+						                        // at C:\Users\vanheemstraw\git\vanHeemstraSystems\mappings\rethinkdb.js:23:5
+
+						                        // Check to see if the Mappings object is valid:
+						                        console.log(server_prefix + ' - Mappings: ', Mappings);
+
+
+
+
+
+
+												var Mapping = Mappings.mapping(configurations.databases.rethinkdb);// call the 'rethinkdb' mapping, providing it with the config for rethinkdb
+
+						                        //FAILS BEFORE WE COME TO HERE: require(..) is not a function
+
+												console.log(server_prefix + ' - Mapping: ', Mapping);
+
+												console.log('++++++++++++++++++++++++++++ LOG POINT server 2 ++++++++++++++++++++++++++++');
+
+												var r = Mapping.r;
+												console.log(server_prefix + ' - r: ', r);
+
+												var type = Mapping.type;
+												console.log(server_prefix + ' - type: ', type);
+
+												// Create the model
+												//WAS var Todo = thinky.createModel("todos", {
+												var Todo = Mapping.createModel("todos", {
+												    id: type.string(),
+												    title: type.string(),
+												    completed: type.boolean(),
+												    createdAt: type.date().default(r.now())
+												});
+												console.log(server_prefix + ' - Todo: ', Todo);
+
+												// Ensure that an index createdAt exists
+												Todo.ensureIndex("createdAt");
+
+												server.use(_Me.proxies.libraries.express.static(__dirname + '/../publications'));
+												//DEPRECATED server.use(bodyParser());
+												server.use(_Me.proxies.libraries.bodyParser.urlencoded({
+												  extended: true
+												}));
+												server.use(_Me.proxies.libraries.bodyParser.json());
+
+												server.route('/todo/get').get(get);
+												server.route('/todo/new').put(create);
+												server.route('/todo/update').post(update);
+												server.route('/todo/delete').post(del);
+
+												// Retrieve all todos
+												function get(req, res, next) {
+												  console.log(server_prefix + ' - Get called');
+												  Todo.orderBy({index: "createdAt"}).run().then(function(result) {
+												    res.send(JSON.stringify(result));
+												  }).error(handleError(res));
+												}
+
+												// Create a new todo
+												function create(req, res, next) {
+												  console.log(server_prefix + ' - Create called');
+												  var todo = new Todo(req.body);
+												  todo.save().then(function(result) {
+												    res.send(JSON.stringify(result));
+												  }).error(handleError(res));
+												}
+
+												// Update a todo
+												function update(req, res, next) {
+												  console.log(server_prefix + ' - Update called');
+												  var todo = new Todo(req.body);
+												  Todo.get(todo.id).update({
+												    title: req.body.title,
+												    completed: req.body.completed
+												  }).run().then(function(todo) {
+												    res.send(JSON.stringify(todo));
+												  }).error(handleError(res));
+
+												  // Another way to update a todo is with
+												  // Todo.get(req.body.id).update(todo).execute()
+												}
+
+												// Delete a todo
+												function del(req, res, next) {
+												  console.log(server_prefix + ' - Delete called');
+												  Todo.get(req.body.id).run().then(function(todo) {
+												    todo.delete().then(function(result) {
+												      res.send("");
+												    }).error(handleError(res));
+												  }).error(handleError(res));
+
+												  // Another way to delete a todo is with
+												  // Todo.get(req.body.id).delete().execute()
+												}
+
+												function handleError(res) {
+												  console.log(server_prefix + ' - handleError called');
+												  return function(error) {
+												    return res.send(500, {error: error.message});
+												  }
+												}
+
+												// Start express
+												server.listen(configurations.servers.express.port);
+												console.log(server_prefix + ' - listening on port '+configurations.servers.express.port);
+
+						                      }); // eof mappings(mapping)
+										  }); // eof configurations(resource)
+
+
+						        //      }); // eof resources(uuid)
+
+					*/
+
+
+
 
 
 
