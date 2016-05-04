@@ -62,7 +62,8 @@ Main.prototype.run = function() {  // a function that returns a promise
 	  // console.log('main - _proxies().proxy().libraries().library().uri: ', _proxies().proxy().libraries().library().uri); // function () { return new LibraryUri(); }
 	  // console.log('main - _proxies().proxy().libraries().library().uri(): ', _proxies().proxy().libraries().library().uri());
 
-	  var uri = new self.proxies().proxy().libraries().library().uri(resourceForUuid.URI);
+	  //ORIGINAL var uri = new self.proxies().proxy().libraries().library().uri(resourceForUuid.URI);
+      var uri = new self.proxies().proxy().libraries().library().uri(self.resource().URI);
 	  console.log('main - uri: ', uri);
 	  var scheme = uri.scheme(); // get scheme from URI e.g. 'urn' or 'url';
 	  console.log('main - scheme: ', scheme);
