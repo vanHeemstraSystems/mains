@@ -423,7 +423,7 @@ Main.prototype.run = function() {  // a function that returns a promise
 
 
 
-    resolve(foo); // Note: return something
+    resolve('foo'); // Note: return something
   }) // eof promise
   .catch(function(error) {
     console.log('main - error: ', error);
