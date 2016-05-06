@@ -12,14 +12,26 @@ function Main() {
   // add key value pairs here
   // self's are not directly publicly accessible, only through their public method(s)
   // use self's here for protection from direct access
+  self._configuration = {}; // will be set
+  self._instructions = {}; // will be set
   self._proxies = {}; // will be set, before passing on to mapping
   self._resource = {}; // will be set, before passing on to mapping
-  self._configuration = {};
-  self._foo = 'bar';
 }
 
-Main.prototype.foo = function() {
-  return self._foo;
+Main.prototype.configuration = function() {
+  return self._configuration;
+}
+
+Main.prototype.setconfiguration = function(fnOrValue) {
+  self._configuration = fnOrValue;
+}
+
+Main.prototype.instructions = function() {
+  return self._instructions;
+}
+
+Main.prototype.setinstructions = function(fnOrValue) {
+  self._instructions = fnOrValue;
 }
 
 Main.prototype.proxies = function() {
@@ -38,23 +50,37 @@ Main.prototype.setresource = function(fnOrValue) {
   self._resource = fnOrValue;
 }
 
-Main.prototype.configuration = function() {
-  return self._configuration;
-}
+Main.prototype.execute = function() {  // a function that returns a promise
+  console.log('mains main - execute called');
+  this.promise = self._proxies.proxy().libraries().library().promise;
+  //var join = promise.join;
+  return new this.promise(function(resolve) {
 
-Main.prototype.setconfiguration = function(fnOrValue) {
-  self._configuration = fnOrValue;
-}
+   // Check the instructions and execute them
 
-Main.prototype.run = function() {  // a function that returns a promise
-  console.log('main - run called');
+
+
+
+
+    resolve('foo'); // Note: return something
+  }) // eof promise
+  .catch(function(error) {
+    console.log('mains main execute - error: ', error);
+  }) // eof catch
+  .finally(function() {
+    console.log('mains main execute - finally');
+  }); // eof finally
+} // eof execute
+
+Main.prototype.start = function() {  // a function that returns a promise
+  console.log('main main - start called');
   // run the resource
   this.promise = self.proxies().proxy().libraries().library().promise;
   //var join = promise.join;
   return new this.promise(function(resolve) {
 
 	  // Get the configurations for resource
-	  console.log('main - self.resource().resource.URI: ', self.resource().URI);
+	  console.log('mains main - self.resource().resource.URI: ', self.resource().URI);
 //	  var configurationForUuid = {}; // REMOVE THIS AS WE ALREADY HAVE IT AS A PROPERTY self._configuration
 	  // See also 
 	  // https://medialize.github.io/URI.js/
@@ -69,45 +95,45 @@ Main.prototype.run = function() {  // a function that returns a promise
 
 	  //ORIGINAL var uri = new self.proxies().proxy().libraries().library().uri(resourceForUuid.URI);
       var uri = new self.proxies().proxy().libraries().library().uri(self.resource().URI);
-	  console.log('main - uri: ', uri);
+	  console.log('mains main - uri: ', uri);
 	  var scheme = uri.scheme(); // get scheme from URI e.g. 'urn' or 'url';
-	  console.log('main - scheme: ', scheme);
+	  console.log('mains main - scheme: ', scheme);
 	  var namespaceIdentifier = uri.heirpart().value.split(':')[0]; // get NID from uri e.g. 'uuid' or 'http'
-	  console.log('main - namespaceIdentifier: ', namespaceIdentifier);
+	  console.log('mains main - namespaceIdentifier: ', namespaceIdentifier);
 	  var namespaceSpecificString = uri.heirpart().value.split(':')[1]; //get NSS from uri e.g. '6e8bc430-9c3a-11d9-9669-0800200c9a66'
-	  console.log('main - namespaceSpecificString: ', namespaceSpecificString);
+	  console.log('mains main - namespaceSpecificString: ', namespaceSpecificString);
 	  switch(scheme) {
 	  	case 'url:':
-	      console.log('main - scheme: ', scheme);
+	      console.log('mains main - scheme: ', scheme);
 	  	  // handle url, for remote files
 		  // TODO
 		  break;
 	    case 'urn:':
 	      // handle urn, for local files
-	 	  console.log('main - scheme: ', scheme);
-		  console.log('main - uri.value: ', uri.value);
+	 	  console.log('mains main - scheme: ', scheme);
+		  console.log('mains main - uri.value: ', uri.value);
 		  var uriParts = uri.value.split(':');
-		  console.log('main - uriParts: ', uriParts);
+		  console.log('mains main - uriParts: ', uriParts);
 		  // Look for the occurence of 'uuid' in the array of uriParts
 		  var uriUuidKeyIndex = uriParts.indexOf('uuid'); // returns the index if the found Object
-		  console.log('main - uriUuidKeyIndex: ', uriUuidKeyIndex);
+		  console.log('mains main - uriUuidKeyIndex: ', uriUuidKeyIndex);
 		  if (uriUuidKeyIndex >= 0) {
 		    var uuid = uriParts[uriUuidKeyIndex+1]; 
-		    console.log('main - uuid: ', uuid);
+		    console.log('mains main - uuid: ', uuid);
 		    // Get a configuration, by comparing with the uuid
 		    //console.log('server - configuration: ', _proxies().proxy().configurations().configuration); // function () { return new ConfigurationsConfiguration(); }
 		    //console.log('server - _proxies().proxy()..configurations().configuration(): ', _proxies().proxy().configurations().configuration());  // Configuration {}
 		    //console.log('server - _proxies().proxy().configurations().configuration()._6e8bc430_9c3a_11d9_9669_0800200c9a66: ', _proxies().proxy().configurations().configuration()._6e8bc430_9c3a_11d9_9669_0800200c9a66);
 		    //console.log('server - _proxies().proxy().configurations().configuration()._6e8bc430_9c3a_11d9_9669_0800200c9a66(): ', _proxies().proxy().configurations().configuration()._6e8bc430_9c3a_11d9_9669_0800200c9a66());
 		    var configuration = self.proxies().proxy().configurations().configuration();
-		    console.log('main - configuration: ', configuration);
+		    console.log('mains main - configuration: ', configuration);
 		    for (var key in configuration) {
-		      console.log('main - key: ', key);
+		      console.log(',mains main - key: ', key);
 		      // Strip prefix _ if present on key, then substitute all _ for - if present on key
 		      var keyUuid = key.replace(/^\_/, "").replace(/_/g, "\-");
-		      console.log('main - keyUuid: ', keyUuid);
+		      console.log('mains main - keyUuid: ', keyUuid);
 		      if(uuid == keyUuid) {
-		        console.log('main - uuid == keyUuid');
+		        console.log('mains main - uuid == keyUuid');
 		        // Do something
 		        //ORIGINAL configurationForUuid = configuration[key]();
                 self.setconfiguration(configuration[key]());
@@ -115,7 +141,7 @@ Main.prototype.run = function() {  // a function that returns a promise
 		      }
 		    } // eof for
 		    //ORIGINAL console.log('main - configurationForUuid: ', configurationForUuid);
-            console.log('main - configuration: ', self.configuration());
+            console.log('mains main - configuration: ', self.configuration());
 		  } // eof if
 		  else {
 		  	// no uuid in resource.URI
@@ -135,66 +161,66 @@ Main.prototype.run = function() {  // a function that returns a promise
 	//  };
 
 
-    console.log('main - +++++++++++++++++++++++++++ CHECK POINT 0001 ++++++++++++++++++++++++++');
+    console.log('mains main - +++++++++++++++++++++++++++ CHECK POINT 0001 ++++++++++++++++++++++++++');
 
       // Check which properties are contained within configurationForUuid
 	  var common = configurationForUuid.common();
-	  console.log('core main - configurationForUuid.common(): ', common);
+	  console.log('mains main - configurationForUuid.common(): ', common);
 	  // Data protection
 	  // var private_host = configurationForUuid.common()._host; // This fails, var _host is private therefore hidden from direct access
 	  // console.log('server - private_host: ', private_host);
 	  // var public_host = configurationForUuid.common().host(); // This succeeds, the method host() is public, with access to the private var _host
 	  // console.log('server - public_host: ', public_host);
 	  var server_prefix = configurationForUuid.common().server_prefix() || 'PREFIX';
-	  console.log('core main - server_prefix: ', server_prefix);
+	  console.log('mains main - server_prefix: ', server_prefix);
 
 	  var serversServer = configurationForUuid.servers().server();
-	  console.log('core main - servers().server(): ', serversServer);
+	  console.log('mains main - servers().server(): ', serversServer);
 
 	  var serversServerExpress = configurationForUuid.servers().server().express();
-	  console.log('core main - servers().server().express(): ', serversServerExpress);
+	  console.log('mains main - servers().server().express(): ', serversServerExpress);
 
 	  var serversServerExpressHost = configurationForUuid.servers().server().express().host();
-	  console.log('core main - servers().server().express().host(): ', serversServerExpressHost); // undefined ?! FIX THIS !!
+	  console.log('mains main - servers().server().express().host(): ', serversServerExpressHost); // undefined ?! FIX THIS !!
 
 	  // Get the express library
 	  var express = _proxies().proxy().libraries().library().express; // note: don't call express yet
-	  console.log('core main - express: ', express);
+	  console.log('mains main - express: ', express);
 	  // Assign express to the server
 	  var server = express(); // note: now call express
-	  console.log('core main - server: ', server);
+	  console.log('mains main - server: ', server);
 
 	  var mappings = _proxies().proxy().mappings();
-	  console.log('core main - mappings: ', mappings);
+	  console.log('mains main - mappings: ', mappings);
 
 	  var mapping = _proxies().proxy().mappings().mapping();
-	  console.log('core main - mapping: ', mapping);
+	  console.log('mains main - mapping: ', mapping);
 
 	  var rethinkdbMapping = _proxies().proxy().mappings().mapping().rethinkdb; // note: don't call rethinkdb yet
-	  console.log('core main - rethinkdbMapping: ', rethinkdbMapping);
+	  console.log('mains main - rethinkdbMapping: ', rethinkdbMapping);
 
 	  var config = configurationForUuid.databases().database().rethinkdb();
-	  console.log('core main - config: ', config);
+	  console.log('mains main - config: ', config);
 
-	  console.log('core main - config.rethinkdb(): ', config.rethinkdb()); // Expected empty Object
+	  console.log('mains main - config.rethinkdb(): ', config.rethinkdb()); // Expected empty Object
 	  var rethinkdb = _proxies().proxy().databases().database().rethinkdb();
-	  console.log('core main - rethinkdb: ', rethinkdb);
+	  console.log('mains main - rethinkdb: ', rethinkdb);
 	  config.setrethinkdb(rethinkdb); // Set rethinkdb to config
-	  console.log('core main - config.rethinkdb(): ', config.rethinkdb()); // Expected set to RethinkDB
+	  console.log('mains main - config.rethinkdb(): ', config.rethinkdb()); // Expected set to RethinkDB
 
-	  console.log('core main - config.event(): ', config.event()); // Expected empty Object
+	  console.log('mains main - config.event(): ', config.event()); // Expected empty Object
 	  var event = _proxies().proxy().events().event();
 	  config.setevent(event); // Set event to config
-	  console.log('core main - config.event(): ', config.event()); // Expected set to Event
+	  console.log('mains main - config.event(): ', config.event()); // Expected set to Event
 
-	  console.log('core main - config.error(): ', config.error()); // Expected empty Object
+	  console.log('mains main - config.error(): ', config.error()); // Expected empty Object
 	  var error = _proxies().proxy().errors().error();
 	  config.seterror(error); // Set error to config
-	  console.log('core main - config.error(): ', config.error()); // Expected set to Error
+	  console.log('mains main - config.error(): ', config.error()); // Expected set to Error
 
 	  var promise = _proxies().proxy().libraries().library().promise;
 	 
-	  console.log('core main - config.utility(): ', config.utility()); // Expected empty Object
+	  console.log('mains main - config.utility(): ', config.utility()); // Expected empty Object
 	  var utility = _proxies().proxy().utilities().utility();
 	  utility.setpromise(promise); // Don't call the promise yet, or should we?
 	  utility.setevent(event);
@@ -203,17 +229,17 @@ Main.prototype.run = function() {  // a function that returns a promise
 	  //utility.inherits(error); // Utility needs to inherit all the error objects // Currently [TypeError: utility.inherits is not a function]
 
 	  config.setutility(utility); // Set utility to config
-	  console.log('core main - config.utility(): ', config.utility()); // Expected set to Utility
+	  console.log('mains main - config.utility(): ', config.utility()); // Expected set to Utility
 
-	  console.log('core main - config.schema(): ', config.schema()); // Expected empty Object 
+	  console.log('mains main - config.schema(): ', config.schema()); // Expected empty Object 
 	  var schema = _proxies().proxy().schemas().schema();
 	  schema.seterror(error);
 	  schema.setutility(utility);
 	  schema.settype(type);
 	  config.setschema(schema); // Set schema to config
-	  console.log('core main - config.schema(): ', config.schema()); // Expected set to Schema
+	  console.log('mains main - config.schema(): ', config.schema()); // Expected set to Schema
 
-	  console.log('core main - config.type(): ', config.type()); // Expected empty Object 
+	  console.log('mains main - config.type(): ', config.type()); // Expected empty Object 
 	  var type = _proxies().proxy().types().type();
 	  type.seterror(error);
 	  type.setutility(utility);
@@ -221,14 +247,14 @@ Main.prototype.run = function() {  // a function that returns a promise
 	  var validator = _proxies().proxy().libraries().library().validator; // note: don't call validator yet
 	  type.setvalidator(validator);
 	  config.settype(type); // Set type to config
-	  console.log('core main - config.type(): ', config.type()); // Expected set to Type
+	  console.log('mains main - config.type(): ', config.type()); // Expected set to Type
 
 	  var feed = _proxies().proxy().feeds().feed();
 	  feed.setevent(event);
 	  feed.setpromise(promise);
 	  feed.setutility(utility);
 
-	  console.log('core main - config.query(): ', config.query()); // Expected empty Object
+	  console.log('mains main - config.query(): ', config.query()); // Expected empty Object
 	  var query = _proxies().proxy().queries().query();
 	  query.seterror(error);
 	  query.setschema(schema);
@@ -236,15 +262,15 @@ Main.prototype.run = function() {  // a function that returns a promise
 	  query.setfeed = (feed);
 	  query.setpromise = (promise);
 
-	  console.log('core main ------------- CHECK POINT  000 -------------'); // FOR TESTING ONLY !
+	  console.log('mains main ------------- CHECK POINT  000 -------------'); // FOR TESTING ONLY !
 
 	// WE ARE HERE ! 
 	  query.setrethinkdb(rethinkdb); // Do this as last set; // Causes [TypeError: self._rethinkdb is not a function]
 	  
-	  console.log('core main ------------- CHECK POINT  001 -------------'); // FOR TESTING ONLY !
+	  console.log('mains main ------------- CHECK POINT  001 -------------'); // FOR TESTING ONLY !
 
 	  config.setquery(query); // Set query to config
-	  console.log('core main - config.query(): ', config.query()); // Expected set to Query
+	  console.log('mains main - config.query(): ', config.query()); // Expected set to Query
 
 	  // Make sure RethinkDB is running before executing the following instruction
 	  // On Windows, run rethinkdb.exe
@@ -256,7 +282,7 @@ Main.prototype.run = function() {  // a function that returns a promise
 
 
 	//  var rethinkdb = rethinkdbMapping.r;
-	//  console.log('core main - rethinkdb: ', rethinkdb);
+	//  console.log('mains main - rethinkdb: ', rethinkdb);
 
 
 
@@ -431,6 +457,6 @@ Main.prototype.run = function() {  // a function that returns a promise
   .finally(function() {
     console.log('main - finally');
   }); // eof finally
-}
+} // eof start
 
 module.exports = Main;
