@@ -95,12 +95,12 @@ Main.prototype.execute = function() {  // a function that returns a promise
 Main.prototype.start = function() {  // a function that returns a promise
   console.log('mains main - start called');
   // start the resource
-  var _promise = self._proxies().proxy().libraries().library().promise();
+  var _promise = self._proxies.proxy().libraries().library().promise();
   //var join = promise.join;
   return new _promise(function(resolve) {
 
 	  // Get the configurations for resource
-	  console.log('mains main - self._resource.URI: ', self._resource.URI);
+	  console.log('mains main - start promise self._resource.URI: ', self._resource.URI);
 //	  var configurationForUuid = {}; // REMOVE THIS AS WE ALREADY HAVE IT AS A PROPERTY self._configuration
 	  // See also 
 	  // https://medialize.github.io/URI.js/
@@ -114,46 +114,46 @@ Main.prototype.start = function() {  // a function that returns a promise
 	  // console.log('main - _proxies().proxy().libraries().library().uri(): ', _proxies().proxy().libraries().library().uri());
 
 	  //ORIGINAL var uri = new self.proxies().proxy().libraries().library().uri(resourceForUuid.URI);
-      var uri = new self._proxies().proxy().libraries().library().uri(self._resource.URI);
-	  console.log('mains main - uri: ', uri);
+      var uri = new self._proxies.proxy().libraries().library().uri(self._resource.URI);
+	  console.log('mains main - start promise uri: ', uri);
 	  var scheme = uri.scheme(); // get scheme from URI e.g. 'urn' or 'url';
-	  console.log('mains main - scheme: ', scheme);
+	  console.log('mains main - start promise scheme: ', scheme);
 	  var namespaceIdentifier = uri.heirpart().value.split(':')[0]; // get NID from uri e.g. 'uuid' or 'http'
-	  console.log('mains main - namespaceIdentifier: ', namespaceIdentifier);
+	  console.log('mains main - start promise namespaceIdentifier: ', namespaceIdentifier);
 	  var namespaceSpecificString = uri.heirpart().value.split(':')[1]; //get NSS from uri e.g. '6e8bc430-9c3a-11d9-9669-0800200c9a66'
-	  console.log('mains main - namespaceSpecificString: ', namespaceSpecificString);
+	  console.log('mains main - start promise namespaceSpecificString: ', namespaceSpecificString);
 	  switch(scheme) {
 	  	case 'url:':
-	      console.log('mains main - scheme: ', scheme);
+	      console.log('mains main - start promise scheme: ', scheme);
 	  	  // handle url, for remote files
 		  // TODO
 		  break;
 	    case 'urn:':
 	      // handle urn, for local files
-	 	  console.log('mains main - scheme: ', scheme);
-		  console.log('mains main - uri.value: ', uri.value);
+	 	  console.log('mains main - start promise scheme: ', scheme);
+		  console.log('mains main - start promise uri.value: ', uri.value);
 		  var uriParts = uri.value.split(':');
-		  console.log('mains main - uriParts: ', uriParts);
+		  console.log('mains main - start promise uriParts: ', uriParts);
 		  // Look for the occurence of 'uuid' in the array of uriParts
 		  var uriUuidKeyIndex = uriParts.indexOf('uuid'); // returns the index if the found Object
-		  console.log('mains main - uriUuidKeyIndex: ', uriUuidKeyIndex);
+		  console.log('mains main - start promise uriUuidKeyIndex: ', uriUuidKeyIndex);
 		  if (uriUuidKeyIndex >= 0) {
 		    var uuid = uriParts[uriUuidKeyIndex+1]; 
-		    console.log('mains main - uuid: ', uuid);
+		    console.log('mains main - start promise uuid: ', uuid);
 		    // Get a configuration, by comparing with the uuid
 		    //console.log('server - configuration: ', _proxies().proxy().configurations().configuration); // function () { return new ConfigurationsConfiguration(); }
 		    //console.log('server - _proxies().proxy()..configurations().configuration(): ', _proxies().proxy().configurations().configuration());  // Configuration {}
 		    //console.log('server - _proxies().proxy().configurations().configuration()._6e8bc430_9c3a_11d9_9669_0800200c9a66: ', _proxies().proxy().configurations().configuration()._6e8bc430_9c3a_11d9_9669_0800200c9a66);
 		    //console.log('server - _proxies().proxy().configurations().configuration()._6e8bc430_9c3a_11d9_9669_0800200c9a66(): ', _proxies().proxy().configurations().configuration()._6e8bc430_9c3a_11d9_9669_0800200c9a66());
 		    var configuration = self.proxies().proxy().configurations().configuration();
-		    console.log('mains main - configuration: ', configuration);
+		    console.log('mains main - start promise configuration: ', configuration);
 		    for (var key in configuration) {
-		      console.log(',mains main - key: ', key);
+		      console.log(',mains main - start promise key: ', key);
 		      // Strip prefix _ if present on key, then substitute all _ for - if present on key
 		      var keyUuid = key.replace(/^\_/, "").replace(/_/g, "\-");
-		      console.log('mains main - keyUuid: ', keyUuid);
+		      console.log('mains main - start promise keyUuid: ', keyUuid);
 		      if(uuid == keyUuid) {
-		        console.log('mains main - uuid == keyUuid');
+		        console.log('mains main - start promise uuid == keyUuid');
 		        // Do something
 		        //ORIGINAL configurationForUuid = configuration[key]();
                 self.setconfiguration(configuration[key]());
@@ -161,7 +161,7 @@ Main.prototype.start = function() {  // a function that returns a promise
 		      }
 		    } // eof for
 		    //ORIGINAL console.log('main - configurationForUuid: ', configurationForUuid);
-            console.log('mains main - configuration: ', self.configuration());
+            console.log('mains main - start promise configuration: ', self.configuration());
 		  } // eof if
 		  else {
 		  	// no uuid in resource.URI
