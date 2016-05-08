@@ -52,28 +52,34 @@ Main.prototype.setresource = function(fnOrValue) {
 
 Main.prototype.execute = function() {  // a function that returns a promise
   console.log('mains main - execute called');
-  this.promise = self._proxies.proxy().libraries().library().promise;
-  //var join = promise.join;
-  return new this.promise(function(resolve) {
+  var _Me = {};
+  var _start = this.start; // a function that returns a promise
+  var _stop = this.stop; // a function that returns a promise
+  var _promise = self._proxies.proxy().libraries().library().promise;
+  var _join = _promise.join;
+  return new _promise(function(resolve) {
 
-   // Check the instructions and execute them
+    // Check the instructions and execute each one of them
+    
+    _join(this.start(),function(start) {
+    	_Me.start = start;
+    }) // eof join
 
 
+//    _join(this.stop(),function(stop) {
+//    	_Me.stop = stop;
+//    }) // eof join
 
+    
+    console.log('mains main inside promise');
 
+    resolve(_Me); // Note: return something
 
-    resolve('foo'); // Note: return something
-  }) // eof promise
-  .catch(function(error) {
-    console.log('mains main execute - error: ', error);
-  }) // eof catch
-  .finally(function() {
-    console.log('mains main execute - finally');
-  }); // eof finally
+  }); // eof promise
 } // eof execute
 
 Main.prototype.start = function() {  // a function that returns a promise
-  console.log('main main - start called');
+  console.log('mains main - start called');
   // run the resource
   this.promise = self.proxies().proxy().libraries().library().promise;
   //var join = promise.join;
