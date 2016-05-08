@@ -16,6 +16,8 @@ function Main() {
   self._instructions = {}; // will be set
   self._proxies = {}; // will be set, before passing on to mapping
   self._resource = {}; // will be set, before passing on to mapping
+  self._start = this.start; // a function that returns a promise
+  self._stop = this.stop; // a function that returns a promise
 }
 
 Main.prototype.configuration = function() {
@@ -53,36 +55,23 @@ Main.prototype.setresource = function(fnOrValue) {
 Main.prototype.execute = function() {  // a function that returns a promise
   console.log('mains main - execute called');
   var _Me = {}; // COME UP WITH SOMETHING ELSE THAN _Me
-  console.log('mains main - execute() ++++++++++ CHECKPOINT 000 ++++++++++'); // WE DON'T GET HERE
-  var _start = this.start; // a function that returns a promise
-  var _stop = this.stop; // a function that returns a promise
   var _promise = self._proxies.proxy().libraries().library().promise();
   var _join = _promise.join;
-
-  console.log('mains main - execute() ++++++++++ CHECKPOINT 001 ++++++++++'); // WE DON'T GET HERE
-
   return new _promise(function(resolve) {
-
-    console.log('mains main - execute() ++++++++++ CHECKPOINT 002 ++++++++++'); // WE DON'T GET HERE, FIX IT!
-
     // Check the instructions and execute each one of them
     self._instructions.forEach(function(instruction) { 
-
-      console.log('mains main - execute() ++++++++++ CHECKPOINT 003 ++++++++++');
-
-      console.log('mains main - instruction: ', instruction);
-
+      console.log('mains main - instruction: ', instruction); 
       for(var key in instruction){
 		console.log('mains main instruction - key: ', key); // key
 		console.log('mains main instruction - instruction[key]: ', instruction[key]); // key's value
 	    switch(key) {
-	      case 'start': 
-	        _join(this.start(),function(start) {
+	      case 'start':
+	        _join(self._start(),function(start) {
 	          _Me.start = start;
 	        }) // eof join
 	        break;
 	      case 'stop':
-	        _join(this.stop(),function(stop) {
+	        _join(self._stop(),function(stop) {
 	          _Me.stop = stop;
 	        }) // eof join
 	        break;
@@ -105,13 +94,13 @@ Main.prototype.execute = function() {  // a function that returns a promise
 
 Main.prototype.start = function() {  // a function that returns a promise
   console.log('mains main - start called');
-  // run the resource
-  this.promise = self.proxies().proxy().libraries().library().promise;
+  // start the resource
+  var _promise = self._proxies().proxy().libraries().library().promise();
   //var join = promise.join;
-  return new this.promise(function(resolve) {
+  return new _promise(function(resolve) {
 
 	  // Get the configurations for resource
-	  console.log('mains main - self.resource().resource.URI: ', self.resource().URI);
+	  console.log('mains main - self._resource.URI: ', self._resource.URI);
 //	  var configurationForUuid = {}; // REMOVE THIS AS WE ALREADY HAVE IT AS A PROPERTY self._configuration
 	  // See also 
 	  // https://medialize.github.io/URI.js/
@@ -125,7 +114,7 @@ Main.prototype.start = function() {  // a function that returns a promise
 	  // console.log('main - _proxies().proxy().libraries().library().uri(): ', _proxies().proxy().libraries().library().uri());
 
 	  //ORIGINAL var uri = new self.proxies().proxy().libraries().library().uri(resourceForUuid.URI);
-      var uri = new self.proxies().proxy().libraries().library().uri(self.resource().URI);
+      var uri = new self._proxies().proxy().libraries().library().uri(self._resource.URI);
 	  console.log('mains main - uri: ', uri);
 	  var scheme = uri.scheme(); // get scheme from URI e.g. 'urn' or 'url';
 	  console.log('mains main - scheme: ', scheme);
@@ -493,9 +482,9 @@ Main.prototype.start = function() {  // a function that returns a promise
 Main.prototype.stop = function() {  // a function that returns a promise
   console.log('mains main - stop called');
   // stop the resource
-  this.promise = self.proxies().proxy().libraries().library().promise;
+  var _promise = self._proxies.proxy().libraries().library().promise();
   //var join = promise.join;
-  return new this.promise(function(resolve) {
+  return new _promise(function(resolve) {
 
     // MORE
 
