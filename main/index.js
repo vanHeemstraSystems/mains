@@ -71,24 +71,27 @@ Main.prototype.execute = function() {  // a function that returns a promise
       console.log('mains main - execute() ++++++++++ CHECKPOINT 003 ++++++++++');
 
       console.log('mains main - instruction: ', instruction);
-      switch(instruction) {
-        case 'start': 
-          _join(this.start(),function(start) {
-      	    _Me.start = start;
-          }) // eof join
-          break;
-        case 'stop':
-          _join(this.stop(),function(stop) {
-    	    _Me.stop = stop;
-          }) // eof join
-          break;
-        default:
-          // do nothing
-      }; // eof switch
 
+      for(var key in instruction){
+		console.log('mains main instruction - key: ', key); // key
+		console.log('mains main instruction - instruction[key]: ', instruction[key]); // key's value
+	    switch(key) {
+	      case 'start': 
+	        _join(this.start(),function(start) {
+	          _Me.start = start;
+	        }) // eof join
+	        break;
+	      case 'stop':
+	        _join(this.stop(),function(stop) {
+	          _Me.stop = stop;
+	        }) // eof join
+	        break;
+	      default:
+	        // do nothing
+	    }; // eof switch
+	  } // eof for
     }); // eof forEach
 
-    
     resolve(_Me); // Note: return something
 
   }) // eof promise
