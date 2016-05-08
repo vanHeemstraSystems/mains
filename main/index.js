@@ -53,29 +53,51 @@ Main.prototype.setresource = function(fnOrValue) {
 Main.prototype.execute = function() {  // a function that returns a promise
   console.log('mains main - execute called');
   var _Me = {};
+  console.log('mains main - execute() ++++++++++ CHECKPOINT 000 ++++++++++'); // WE DON'T GET HERE
   var _start = this.start; // a function that returns a promise
   var _stop = this.stop; // a function that returns a promise
   var _promise = self._proxies.proxy().libraries().library().promise;
   var _join = _promise.join;
+
+  console.log('mains main - execute() ++++++++++ CHECKPOINT 001 ++++++++++'); // WE DON'T GET HERE
+
   return new _promise(function(resolve) {
 
+    console.log('mains main - execute() ++++++++++ CHECKPOINT 002 ++++++++++'); // WE DON'T GET HERE, FIX IT!
+
     // Check the instructions and execute each one of them
+    self._instructions.forEach(function(instruction) { 
+
+      console.log('mains main - execute() ++++++++++ CHECKPOINT 003 ++++++++++');
+
+      console.log('mains main - instruction: ', instruction);
+      switch(instruction) {
+        case 'start': 
+          _join(this.start(),function(start) {
+      	    _Me.start = start;
+          }) // eof join
+          break;
+        case 'stop':
+          _join(this.stop(),function(stop) {
+    	    _Me.stop = stop;
+          }) // eof join
+          break;
+        default:
+          // do nothing
+      }; // eof switch
+
+    }); // eof forEach
+
     
-    _join(this.start(),function(start) {
-    	_Me.start = start;
-    }) // eof join
-
-
-//    _join(this.stop(),function(stop) {
-//    	_Me.stop = stop;
-//    }) // eof join
-
-    
-    console.log('mains main inside promise');
-
     resolve(_Me); // Note: return something
 
-  }); // eof promise
+  }) // eof promise
+  .catch(function(error) {
+    console.log('mains main execute - error: ', error);
+  }) // eof catch
+  .finally(function() {
+    console.log('mains main execute - finally');
+  }); // eof finally
 } // eof execute
 
 Main.prototype.start = function() {  // a function that returns a promise
@@ -458,11 +480,30 @@ Main.prototype.start = function() {  // a function that returns a promise
     resolve('foo'); // Note: return something
   }) // eof promise
   .catch(function(error) {
-    console.log('main - error: ', error);
+    console.log('mains main - start() error: ', error);
   }) // eof catch
   .finally(function() {
-    console.log('main - finally');
+    console.log('mains main - start() finally');
   }); // eof finally
 } // eof start
+
+Main.prototype.stop = function() {  // a function that returns a promise
+  console.log('mains main - stop called');
+  // stop the resource
+  this.promise = self.proxies().proxy().libraries().library().promise;
+  //var join = promise.join;
+  return new this.promise(function(resolve) {
+
+    // MORE
+
+    resolve('foo'); // Note: return something
+  }) // eof promise
+  .catch(function(error) {
+    console.log('mains main - stop() error: ', error);
+  }) // eof catch
+  .finally(function() {
+    console.log('mains main - stop() finally');
+  }); // eof finally
+} // eof stop
 
 module.exports = Main;
