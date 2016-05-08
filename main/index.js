@@ -52,11 +52,11 @@ Main.prototype.setresource = function(fnOrValue) {
 
 Main.prototype.execute = function() {  // a function that returns a promise
   console.log('mains main - execute called');
-  var _Me = {};
+  var _Me = {}; // COME UP WITH SOMETHING ELSE THAN _Me
   console.log('mains main - execute() ++++++++++ CHECKPOINT 000 ++++++++++'); // WE DON'T GET HERE
   var _start = this.start; // a function that returns a promise
   var _stop = this.stop; // a function that returns a promise
-  var _promise = self._proxies.proxy().libraries().library().promise;
+  var _promise = self._proxies.proxy().libraries().library().promise();
   var _join = _promise.join;
 
   console.log('mains main - execute() ++++++++++ CHECKPOINT 001 ++++++++++'); // WE DON'T GET HERE
