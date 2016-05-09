@@ -18,6 +18,7 @@ function Main() {
   self._resource = {}; // will be set, before passing on to mapping
   self._start = this.start; // a function that returns a promise
   self._stop = this.stop; // a function that returns a promise
+  self._setconfiguration = this.setconfiguration;
 }
 
 Main.prototype.configuration = function() {
@@ -145,10 +146,10 @@ Main.prototype.start = function() {  // a function that returns a promise
 		    //console.log('server - _proxies().proxy()..configurations().configuration(): ', _proxies().proxy().configurations().configuration());  // Configuration {}
 		    //console.log('server - _proxies().proxy().configurations().configuration()._6e8bc430_9c3a_11d9_9669_0800200c9a66: ', _proxies().proxy().configurations().configuration()._6e8bc430_9c3a_11d9_9669_0800200c9a66);
 		    //console.log('server - _proxies().proxy().configurations().configuration()._6e8bc430_9c3a_11d9_9669_0800200c9a66(): ', _proxies().proxy().configurations().configuration()._6e8bc430_9c3a_11d9_9669_0800200c9a66());
-		    var configuration = self.proxies().proxy().configurations().configuration();
+		    var configuration = self._proxies.proxy().configurations().configuration();
 		    console.log('mains main - start promise configuration: ', configuration);
 		    for (var key in configuration) {
-		      console.log(',mains main - start promise key: ', key);
+		      console.log('mains main - start promise key: ', key);
 		      // Strip prefix _ if present on key, then substitute all _ for - if present on key
 		      var keyUuid = key.replace(/^\_/, "").replace(/_/g, "\-");
 		      console.log('mains main - start promise keyUuid: ', keyUuid);
@@ -156,12 +157,12 @@ Main.prototype.start = function() {  // a function that returns a promise
 		        console.log('mains main - start promise uuid == keyUuid');
 		        // Do something
 		        //ORIGINAL configurationForUuid = configuration[key]();
-                self.setconfiguration(configuration[key]());
+                self._setconfiguration(configuration[key]());
 		        break;
 		      }
 		    } // eof for
 		    //ORIGINAL console.log('main - configurationForUuid: ', configurationForUuid);
-            console.log('mains main - start promise configuration: ', self.configuration());
+            console.log('mains main - start promise configuration: ', self._configuration);
 		  } // eof if
 		  else {
 		  	// no uuid in resource.URI
@@ -172,35 +173,32 @@ Main.prototype.start = function() {  // a function that returns a promise
 	      break;
 	  }//eof switch
 	  // Validate configuration
-	  if(Object.keys(self.configuration()).length == 0) {
+	  if(Object.keys(self._configuration).length == 0) {
 	    // Raise an error, the resource has not been found
 	    throw new Error("No configuration found for uuid: ", uuid); // TO FIX: for some reason the value of uuid is empty here
 	  } 
 	//  else {
-	//    return configurationForUuid;
+	//    return self._configuration;
 	//  };
 
-
-    console.log('mains main - +++++++++++++++++++++++++++ CHECK POINT 0001 ++++++++++++++++++++++++++');
-
-      // Check which properties are contained within configurationForUuid
-	  var common = configurationForUuid.common();
-	  console.log('mains main - configurationForUuid.common(): ', common);
+      // Check which properties are contained within self._configuration
+	  var common = self._configuration.common();
+	  console.log('mains main - self._configuration.common(): ', common);
 	  // Data protection
-	  // var private_host = configurationForUuid.common()._host; // This fails, var _host is private therefore hidden from direct access
+	  // var private_host = self._configuration.common()._host; // This fails, var _host is private therefore hidden from direct access
 	  // console.log('server - private_host: ', private_host);
-	  // var public_host = configurationForUuid.common().host(); // This succeeds, the method host() is public, with access to the private var _host
+	  // var public_host = self._configuration.common().host(); // This succeeds, the method host() is public, with access to the private var _host
 	  // console.log('server - public_host: ', public_host);
-	  var server_prefix = configurationForUuid.common().server_prefix() || 'PREFIX';
+	  var server_prefix = self._configuration.common().server_prefix() || 'PREFIX';
 	  console.log('mains main - server_prefix: ', server_prefix);
 
-	  var serversServer = configurationForUuid.servers().server();
+	  var serversServer = self._configuration.servers().server();
 	  console.log('mains main - servers().server(): ', serversServer);
 
-	  var serversServerExpress = configurationForUuid.servers().server().express();
+	  var serversServerExpress = self._configuration.servers().server().express();
 	  console.log('mains main - servers().server().express(): ', serversServerExpress);
 
-	  var serversServerExpressHost = configurationForUuid.servers().server().express().host();
+	  var serversServerExpressHost = self._configuration.servers().server().express().host();
 	  console.log('mains main - servers().server().express().host(): ', serversServerExpressHost); // undefined ?! FIX THIS !!
 
 	  // Get the express library
@@ -219,7 +217,7 @@ Main.prototype.start = function() {  // a function that returns a promise
 	  var rethinkdbMapping = _proxies().proxy().mappings().mapping().rethinkdb; // note: don't call rethinkdb yet
 	  console.log('mains main - rethinkdbMapping: ', rethinkdbMapping);
 
-	  var config = configurationForUuid.databases().database().rethinkdb();
+	  var config = self._configuration.databases().database().rethinkdb();
 	  console.log('mains main - config: ', config);
 
 	  console.log('mains main - config.rethinkdb(): ', config.rethinkdb()); // Expected empty Object
