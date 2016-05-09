@@ -201,6 +201,7 @@ Main.prototype.start = function() {  // a function that returns a promise
 	  var serversServerExpressHost = self._configuration.servers().server().express().host();
 	  console.log('mains main - servers().server().express().host(): ', serversServerExpressHost); // undefined ?! FIX THIS !!
 
+      // TO DO: INSTEAD OF USING THE EXPRESS LIBRARY HERE, USE THE servers.server SUBTREE OBJECTS ....
 	  // Get the express library
 	  var express = _proxies().proxy().libraries().library().express; // note: don't call express yet
 	  console.log('mains main - express: ', express);
