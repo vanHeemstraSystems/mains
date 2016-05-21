@@ -203,44 +203,52 @@ Main.prototype.start = function() {  // a function that returns a promise
 
       // TO DO: INSTEAD OF USING THE EXPRESS LIBRARY HERE, USE THE servers.server SUBTREE OBJECTS ....
 	  // Get the express library
-	  var express = _proxies().proxy().libraries().library().express; // note: don't call express yet
-	  console.log('mains main - express: ', express);
-	  // Assign express to the server
-	  var server = express(); // note: now call express
-	  console.log('mains main - server: ', server);
+//	     var express = _proxies().proxy().libraries().library().express; // note: don't call express yet
+//	     console.log('mains main - express: ', express);
+//	     // Assign express to the server
+//	     var server = express(); // note: now call express
+//	     console.log('mains main - server: ', server);
+      
+	  var servers = self._proxies.proxy().servers();
+	  console.log('mains main - servers: ', servers);
 
-	  var mappings = _proxies().proxy().mappings();
+	  var server = self._proxies.proxy().servers().server();
+	  console.log('mains main - servers server: ', server);
+
+	  var mappings = self._proxies.proxy().mappings();
 	  console.log('mains main - mappings: ', mappings);
 
-	  var mapping = _proxies().proxy().mappings().mapping();
+	  var mapping = self._proxies.proxy().mappings().mapping();
 	  console.log('mains main - mapping: ', mapping);
 
-	  var rethinkdbMapping = _proxies().proxy().mappings().mapping().rethinkdb; // note: don't call rethinkdb yet
+	  var rethinkdbMapping = self._proxies.proxy().mappings().mapping().rethinkdb; // note: don't call rethinkdb yet
 	  console.log('mains main - rethinkdbMapping: ', rethinkdbMapping);
 
 	  var config = self._configuration.databases().database().rethinkdb();
 	  console.log('mains main - config: ', config);
 
 	  console.log('mains main - config.rethinkdb(): ', config.rethinkdb()); // Expected empty Object
-	  var rethinkdb = _proxies().proxy().databases().database().rethinkdb();
+
+	  var rethinkdb = self._proxies.proxy().databases().database().rethinkdb();
 	  console.log('mains main - rethinkdb: ', rethinkdb);
+
 	  config.setrethinkdb(rethinkdb); // Set rethinkdb to config
 	  console.log('mains main - config.rethinkdb(): ', config.rethinkdb()); // Expected set to RethinkDB
 
 	  console.log('mains main - config.event(): ', config.event()); // Expected empty Object
-	  var event = _proxies().proxy().events().event();
+	  var event = self._proxies.proxy().events().event();
 	  config.setevent(event); // Set event to config
 	  console.log('mains main - config.event(): ', config.event()); // Expected set to Event
 
 	  console.log('mains main - config.error(): ', config.error()); // Expected empty Object
-	  var error = _proxies().proxy().errors().error();
+	  var error = self._proxies.proxy().errors().error();
 	  config.seterror(error); // Set error to config
 	  console.log('mains main - config.error(): ', config.error()); // Expected set to Error
 
-	  var promise = _proxies().proxy().libraries().library().promise;
+	  var promise = self._proxies.proxy().libraries().library().promise;
 	 
 	  console.log('mains main - config.utility(): ', config.utility()); // Expected empty Object
-	  var utility = _proxies().proxy().utilities().utility();
+	  var utility = self._proxies.proxy().utilities().utility();
 	  utility.setpromise(promise); // Don't call the promise yet, or should we?
 	  utility.setevent(event);
 
@@ -251,7 +259,7 @@ Main.prototype.start = function() {  // a function that returns a promise
 	  console.log('mains main - config.utility(): ', config.utility()); // Expected set to Utility
 
 	  console.log('mains main - config.schema(): ', config.schema()); // Expected empty Object 
-	  var schema = _proxies().proxy().schemas().schema();
+	  var schema = self._proxies.proxy().schemas().schema();
 	  schema.seterror(error);
 	  schema.setutility(utility);
 	  schema.settype(type);
@@ -259,22 +267,22 @@ Main.prototype.start = function() {  // a function that returns a promise
 	  console.log('mains main - config.schema(): ', config.schema()); // Expected set to Schema
 
 	  console.log('mains main - config.type(): ', config.type()); // Expected empty Object 
-	  var type = _proxies().proxy().types().type();
+	  var type = self._proxies.proxy().types().type();
 	  type.seterror(error);
 	  type.setutility(utility);
 	  type.setschema(schema);
-	  var validator = _proxies().proxy().libraries().library().validator; // note: don't call validator yet
+	  var validator = self._proxies.proxy().libraries().library().validator; // note: don't call validator yet
 	  type.setvalidator(validator);
 	  config.settype(type); // Set type to config
 	  console.log('mains main - config.type(): ', config.type()); // Expected set to Type
 
-	  var feed = _proxies().proxy().feeds().feed();
+	  var feed = self._proxies.proxy().feeds().feed();
 	  feed.setevent(event);
 	  feed.setpromise(promise);
 	  feed.setutility(utility);
 
 	  console.log('mains main - config.query(): ', config.query()); // Expected empty Object
-	  var query = _proxies().proxy().queries().query();
+	  var query = self._proxies.proxy().queries().query();
 	  query.seterror(error);
 	  query.setschema(schema);
 	  query.setutility(utility);
@@ -284,7 +292,7 @@ Main.prototype.start = function() {  // a function that returns a promise
 	  console.log('mains main ------------- CHECK POINT  000 -------------'); // FOR TESTING ONLY !
 
 	// WE ARE HERE ! 
-	  query.setrethinkdb(rethinkdb); // Do this as last set; // Causes [TypeError: self._rethinkdb is not a function]
+	  query.setrethinkdb(rethinkdb); // Do this as last set; // Causes [TypeError: self._rethinkdb is not a function] because here rethinkdb is not a function! Fix this!
 	  
 	  console.log('mains main ------------- CHECK POINT  001 -------------'); // FOR TESTING ONLY !
 
@@ -296,8 +304,6 @@ Main.prototype.start = function() {  // a function that returns a promise
 	  // On Linux, tbc
 	  // On Mac, tbc
 	  var rethinkdbMapping = rethinkdbMapping(config);
-
-
 
 
 	//  var rethinkdb = rethinkdbMapping.r;
